@@ -5,6 +5,7 @@ class Settings(BaseSettings):
     jwt_key: constr(min_length=32)
     mongodb_username: str
     mongodb_password: str
+    allow_register: bool
 
     class Config:
         env_file = ".env"
