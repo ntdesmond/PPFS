@@ -1,10 +1,8 @@
 from fastapi import FastAPI
-from routers import files, auth, register
-from settings import settings
+from routers import include_routers
+from exceptions import register_error_handlers
 
 app = FastAPI(title="PPFS", version="0.0.1")
 
-app.include_router(files.router)
-app.include_router(auth.router)
-if settings.allow_register:
-    app.include_router(register.router)
+include_routers(app)
+register_error_handlers(app)

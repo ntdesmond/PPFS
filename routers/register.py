@@ -1,10 +1,15 @@
 from fastapi import APIRouter
 
-from schemas import UserAuthentication
+from models.schemas import UserAuthentication
+from utils import users, create_access_token
 
-router = APIRouter()
+router = APIRouter(tags=["Auth"])
 
 
 @router.post('/register')
 async def register(user: UserAuthentication):
-    return {"reg": "not yet"}
+    user = await users.create(user)
+    return {
+        "access_token": create_access_token(user.id),
+        "token_type": "bearer"
+    }

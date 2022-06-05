@@ -1,24 +1,26 @@
-from fastapi import Security, HTTPException, Depends, status
+from fastapi import Security, Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jose import JWTError, ExpiredSignatureError
+from jose import JWTError
+from bson import ObjectId
 
-from schemas import TokenData
-from utils.token import check_access_token
+from exceptions.auth import InvalidCredentialsError, UserNotFoundError
+from models.dataclasses import TokenData, User
+from utils import decode_access_token, users
 
 security = HTTPBearer()
+
+invalid_token_exception = InvalidCredentialsError("Invalid or expired token.")
 
 
 async def get_access_token(credentials: HTTPAuthorizationCredentials = Security(security)) -> TokenData:
     try:
-        return TokenData(user=check_access_token(credentials.credentials))
+        return decode_access_token(credentials.credentials)
     except JWTError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token.",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        raise invalid_token_exception
 
 
-async def get_current_user(token_data: TokenData = Depends(get_access_token)) -> str:
-    # TODO: check the validity of the user
-    return token_data.user
+async def get_current_user(token_data: TokenData = Depends(get_access_token)) -> User:
+    try:
+        return await users.get(ObjectId(token_data.user_id))
+    except UserNotFoundError:
+        raise invalid_token_exception
