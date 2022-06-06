@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from settings import settings
+from ..settings import settings
 from . import auth, files, register
 
 

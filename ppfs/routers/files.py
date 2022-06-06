@@ -2,10 +2,10 @@ from bson import ObjectId
 from fastapi import APIRouter, Depends, UploadFile, status
 from fastapi.responses import StreamingResponse, Response
 
-from dependencies import get_current_user, get_privileged_user, get_id
-from factory import files
-from models.schemas import FileInfo
-from utils.files import get_file_chunks
+from ..dependencies import get_current_user, get_privileged_user, get_id
+from ..factory import files
+from ..models.schemas import FileInfo
+from ..utils.files import get_file_chunks
 
 read_router = APIRouter(
     tags=["Read files"],

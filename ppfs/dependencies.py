@@ -5,11 +5,11 @@ from gridfs import NoFile
 from jose import JWTError
 from bson import ObjectId
 
-from exceptions.auth import InvalidCredentialsError, UserNotFoundError
-from exceptions.access import NotPrivilegedUser
-from models.dataclasses import TokenData, User
-from utils.token import decode_access_token
-from factory import users
+from .exceptions.auth import InvalidCredentialsError, UserNotFoundError
+from .exceptions.access import NotPrivilegedUser
+from .models.dataclasses import TokenData, User
+from .utils.token import decode_access_token
+from .factory import users
 
 security = HTTPBearer()
 

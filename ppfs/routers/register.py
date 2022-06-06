@@ -1,8 +1,8 @@
 from fastapi import APIRouter, status
 
-from models.schemas import UserAuthentication, AuthenticationResponse
-from utils.token import create_access_token
-from factory import users
+from ..models.schemas import UserAuthentication, AuthenticationResponse
+from ..utils.token import create_access_token
+from ..factory import users
 
 router = APIRouter(tags=["Auth"])
 

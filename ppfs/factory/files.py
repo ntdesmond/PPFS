@@ -3,8 +3,8 @@ from bson import ObjectId
 from gridfs import GridOut, NoFile
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorGridFSBucket
 
-from models.schemas import FileInfo
-from settings import settings
+from ..models.schemas import FileInfo
+from ..settings import settings
 
 
 class Files:

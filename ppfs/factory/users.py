@@ -4,10 +4,10 @@ from passlib.context import CryptContext
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.errors import DuplicateKeyError
 
-from models.dataclasses import User
-from exceptions.auth import InvalidCredentialsError, UserNotFoundError
-from models.schemas import UserAuthentication
-from settings import settings
+from ..models.dataclasses import User
+from ..exceptions.auth import InvalidCredentialsError, UserNotFoundError
+from ..models.schemas import UserAuthentication
+from ..settings import settings
 
 
 class Users:

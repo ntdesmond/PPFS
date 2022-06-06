@@ -1,10 +1,9 @@
 from datetime import datetime, timedelta
-
 from bson import ObjectId
 from jose import jwt
 
-from models.dataclasses import TokenData
-from settings import settings
+from ..models.dataclasses import TokenData
+from ..settings import settings
 
 
 def create_access_token(user_id: ObjectId, expires_in: timedelta | None = None):
