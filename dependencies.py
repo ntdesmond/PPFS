@@ -1,11 +1,12 @@
-from fastapi import Security, Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi import Security, Depends
 from jose import JWTError
 from bson import ObjectId
 
 from exceptions.auth import InvalidCredentialsError, UserNotFoundError
 from models.dataclasses import TokenData, User
-from utils import decode_access_token, users
+from utils.token import decode_access_token
+from factory import users
 
 security = HTTPBearer()
 
