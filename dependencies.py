@@ -32,3 +32,7 @@ async def get_privileged_user(user: User = Depends(get_current_user)) -> User:
     if not user.is_admin:
         raise NotPrivilegedUser("This user cannot modify files.")
     return user
+
+
+async def get_id(id: str) -> ObjectId:
+    return ObjectId(id)
