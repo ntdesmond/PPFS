@@ -1,5 +1,7 @@
+from bson.errors import InvalidId
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi import Security, Depends
+from gridfs import NoFile
 from jose import JWTError
 from bson import ObjectId
 
@@ -35,4 +37,7 @@ async def get_privileged_user(user: User = Depends(get_current_user)) -> User:
 
 
 async def get_id(id: str) -> ObjectId:
-    return ObjectId(id)
+    try:
+        return ObjectId(id)
+    except InvalidId:
+        raise NoFile("File ID is incorrect")
