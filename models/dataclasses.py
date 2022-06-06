@@ -1,5 +1,5 @@
 from bson import ObjectId
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class TokenData(BaseModel):
@@ -9,6 +9,10 @@ class TokenData(BaseModel):
 class User(BaseModel):
     id: ObjectId
     username: str
+    is_admin: bool
 
     class Config:
         arbitrary_types_allowed = True
+        json_encoders = {
+            ObjectId: str
+        }

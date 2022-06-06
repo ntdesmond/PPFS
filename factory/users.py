@@ -30,26 +30,29 @@ class Users:
 
     async def authenticate(self, user_auth: UserAuthentication) -> User:
         user = await self.__collection.find_one({'username': user_auth.username})
+        user['id'] = user['_id']
 
         if user is None or not self.__password_context.verify(user_auth.password, user['password']):
             raise InvalidCredentialsError("Invalid username or password.")
 
-        return User(id=user['_id'], username=user['username'])
+        return User.parse_obj(user)
 
-    async def create(self, user_auth: UserAuthentication) -> User:
+    async def create(self, user_auth: UserAuthentication, is_admin: bool) -> User:
         try:
             result = await self.__collection.insert_one({
                 'username': user_auth.username,
-                'password': self.__password_context.hash(user_auth.password)
+                'password': self.__password_context.hash(user_auth.password),
+                'is_admin': is_admin
             })
         except DuplicateKeyError:
             raise InvalidCredentialsError("Username is already taken.")
-        return User(id=result.inserted_id, username=user_auth.username)
+        return User(id=result.inserted_id, username=user_auth.username, is_admin=is_admin)
 
     async def get(self, id: ObjectId) -> User:
         user = await self.__collection.find_one({'_id': id})
+        user['id'] = user['_id']
 
         if user is None:
             raise UserNotFoundError("User not found.")
 
-        return User(id=user['_id'], username=user['username'])
+        return User.parse_obj(user)

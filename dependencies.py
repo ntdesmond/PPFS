@@ -4,6 +4,7 @@ from jose import JWTError
 from bson import ObjectId
 
 from exceptions.auth import InvalidCredentialsError, UserNotFoundError
+from exceptions.access import NotPrivilegedUser
 from models.dataclasses import TokenData, User
 from utils.token import decode_access_token
 from factory import users
@@ -25,3 +26,9 @@ async def get_current_user(token_data: TokenData = Depends(get_access_token)) ->
         return await users.get(ObjectId(token_data.user_id))
     except UserNotFoundError:
         raise invalid_token_exception
+
+
+async def get_privileged_user(user: User = Depends(get_current_user)) -> User:
+    if not user.is_admin:
+        raise NotPrivilegedUser("This user cannot modify files.")
+    return user
