@@ -1,14 +1,13 @@
 from fastapi import FastAPI
 
 from settings import settings
-from .auth import router as auth_router
-from .files import router as files_router
-from .register import router as register_router
+from . import auth, files, register
 
 
 def include_routers(app: FastAPI):
-    app.include_router(auth_router)
-    app.include_router(files_router)
+    app.include_router(auth.router)
+    app.include_router(files.read_router)
+    app.include_router(files.write_router)
 
     if settings.allow_register:
-        app.include_router(register_router)
+        app.include_router(register.router)
