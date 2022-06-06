@@ -1,9 +1,10 @@
 from bson import ObjectId
-from fastapi import APIRouter, Depends, UploadFile
-from fastapi.responses import StreamingResponse
+from fastapi import APIRouter, Depends, UploadFile, status
+from fastapi.responses import StreamingResponse, Response
 
 from dependencies import get_current_user, get_privileged_user, get_id
 from factory import files
+from models.schemas import FileInfo
 from utils.files import get_file_chunks
 
 read_router = APIRouter(
@@ -17,12 +18,12 @@ write_router = APIRouter(
 
 
 # Unprivileged users: list and get files
-@read_router.get("/")
+@read_router.get("/", status_code=status.HTTP_200_OK, response_model=list[FileInfo])
 async def get_files_list():
     return await files.list()
 
 
-@read_router.get("/{id}")
+@read_router.get("/{id}", status_code=status.HTTP_200_OK, response_class=StreamingResponse)
 async def get_file_content(id: ObjectId = Depends(get_id)):
     file_info = await files.get(id)
     file_content = get_file_chunks(await files.get_download_stream(id=id))
@@ -30,17 +31,17 @@ async def get_file_content(id: ObjectId = Depends(get_id)):
 
 
 # Privileged users: add, edit and delete files
-@write_router.post("/new")
+@write_router.post("/new", status_code=status.HTTP_201_CREATED, response_model=FileInfo)
 async def create_new_file(file: UploadFile):
     return await files.upload_file(file.filename, file.file, file.content_type)
 
 
-@write_router.patch("/{id}")
+@write_router.patch("/{id}", status_code=status.HTTP_200_OK, response_model=FileInfo)
 async def rename_file(new_name: str, id: ObjectId = Depends(get_id)):
     await files.rename(id, new_name)
     return await files.get(id)
 
 
-@write_router.delete("/{id}", status_code=204)
+@write_router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
 async def delete_file(id: ObjectId = Depends(get_id)):
     await files.delete(id)

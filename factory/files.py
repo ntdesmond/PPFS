@@ -19,7 +19,7 @@ class Files:
     async def list(self) -> list[FileInfo]:
         cursor = self.__bucket.find()
         return [
-            FileInfo(id=ObjectId(file._id), filename=file.filename, content_type=file.metadata['type'])
+            FileInfo(id=file._id, filename=file.filename, content_type=file.metadata['type'])
             async for file in cursor
         ]
 
@@ -44,7 +44,7 @@ class Files:
                 id, filename, file, metadata={'type': content_type}
             )
             file_id = id
-        return FileInfo(id=file_id, filename=filename, content_type=content_type)
+        return FileInfo(id=str(file_id), filename=filename, content_type=content_type)
 
     async def delete(self, id: ObjectId) -> None:
         await self.__bucket.delete(id)

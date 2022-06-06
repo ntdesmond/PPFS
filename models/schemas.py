@@ -7,13 +7,14 @@ class UserAuthentication(BaseModel):
     password: constr(min_length=8, max_length=64)
 
 
+class AuthenticationResponse(BaseModel):
+    access_token: str
+
+
 class FileInfo(BaseModel):
-    id: ObjectId
+    id: str
     filename: str
     content_type: str
 
-    class Config:
-        arbitrary_types_allowed = True
-        json_encoders = {
-            ObjectId: str
-        }
+    def __init__(self, id: ObjectId | str, **kwargs):
+        super().__init__(id=str(id), **kwargs)
