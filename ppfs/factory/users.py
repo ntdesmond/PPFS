@@ -30,11 +30,11 @@ class Users:
 
     async def authenticate(self, user_auth: UserAuthentication) -> User:
         user = await self.__collection.find_one({'username': user_auth.username})
-        user['id'] = user['_id']
 
         if user is None or not self.__password_context.verify(user_auth.password, user['password']):
             raise InvalidCredentialsError("Invalid username or password.")
 
+        user['id'] = user['_id']
         return User.parse_obj(user)
 
     async def create(self, user_auth: UserAuthentication, is_admin: bool) -> User:
@@ -56,9 +56,9 @@ class Users:
 
     async def get(self, id: ObjectId) -> User:
         user = await self.__collection.find_one({'_id': id})
-        user['id'] = user['_id']
 
         if user is None:
             raise UserNotFoundError("User not found.")
 
+        user['id'] = user['_id']
         return User.parse_obj(user)
