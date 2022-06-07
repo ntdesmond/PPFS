@@ -9,7 +9,7 @@ from .exceptions.auth import InvalidCredentialsError, UserNotFoundError
 from .exceptions.access import NotPrivilegedUser
 from .models.dataclasses import TokenData, User
 from .utils.token import decode_access_token
-from .factory import users
+from .factory import get_user_factory, Users
 
 security = HTTPBearer()
 
@@ -23,7 +23,10 @@ async def get_access_token(credentials: HTTPAuthorizationCredentials = Security(
         raise invalid_token_exception
 
 
-async def get_current_user(token_data: TokenData = Depends(get_access_token)) -> User:
+async def get_current_user(
+    token_data: TokenData = Depends(get_access_token),
+    users: Users = Depends(get_user_factory)
+) -> User:
     try:
         return await users.get(ObjectId(token_data.user_id))
     except UserNotFoundError:
