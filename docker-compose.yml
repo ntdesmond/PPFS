@@ -8,9 +8,13 @@ services:
       context: ./
     environment:
       - PPFS_JWT_KEY
-      - PPFS_ALLOW_REGISTER
       - PPFS_MONGODB_USERNAME
       - PPFS_MONGODB_PASSWORD
+      - PPFS_ALLOW_REGISTER
+      - PPFS_DEFAULT_ADMIN_USERNAME
+      - PPFS_DEFAULT_ADMIN_PASSWORD
+      - PPFS_DEFAULT_USER_USERNAME
+      - PPFS_DEFAULT_USER_PASSWORD
       - PPFS_MONGODB_HOST=mongodb
     ports:
       - "8000:8000"

@@ -48,6 +48,12 @@ class Users:
             raise InvalidCredentialsError("Username is already taken.")
         return User(id=result.inserted_id, username=user_auth.username, is_admin=is_admin)
 
+    async def create_default(self, user_auth: UserAuthentication, is_admin: bool) -> None:
+        try:
+            await self.create(user_auth, is_admin)
+        except InvalidCredentialsError:
+            pass
+
     async def get(self, id: ObjectId) -> User:
         user = await self.__collection.find_one({'_id': id})
         user['id'] = user['_id']
