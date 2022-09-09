@@ -1,5 +1,12 @@
 from bson import ObjectId
 from pydantic import BaseModel
+from enum import Enum
+
+
+class UserRole(Enum):
+    READONLY = 'read'
+    EDITOR = 'edit'
+    SUPERUSER = 'admin'
 
 
 class TokenData(BaseModel):
@@ -9,7 +16,7 @@ class TokenData(BaseModel):
 class User(BaseModel):
     id: ObjectId
     username: str
-    is_admin: bool
+    role: UserRole
 
     class Config:
         arbitrary_types_allowed = True

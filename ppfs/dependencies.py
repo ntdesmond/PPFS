@@ -7,7 +7,7 @@ from bson import ObjectId
 
 from .exceptions.auth import InvalidCredentialsError, UserNotFoundError
 from .exceptions.access import NotPrivilegedUser
-from .models.dataclasses import TokenData, User
+from .models.dataclasses import TokenData, User, UserRole
 from .utils.token import decode_access_token
 from .factory import get_user_factory, Users
 
@@ -33,9 +33,16 @@ async def get_current_user(
         raise invalid_token_exception
 
 
-async def get_privileged_user(user: User = Depends(get_current_user)) -> User:
-    if not user.is_admin:
+async def get_editor_user(user: User = Depends(get_current_user)) -> User:
+    # Note: superusers can't modify files
+    if not user.role == UserRole.EDITOR:
         raise NotPrivilegedUser("This user cannot modify files.")
+    return user
+
+
+async def get_superuser(user: User = Depends(get_current_user)) -> User:
+    if not user.role == UserRole.SUPERUSER:
+        raise NotPrivilegedUser("This user cannot add new users.")
     return user
 
 

@@ -4,7 +4,7 @@ from passlib.context import CryptContext
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.errors import DuplicateKeyError
 
-from ..models.dataclasses import User
+from ..models.dataclasses import User, UserRole
 from ..exceptions.auth import InvalidCredentialsError, UserNotFoundError
 from ..models.schemas import UserAuthentication
 from ..settings import settings
@@ -37,20 +37,20 @@ class Users:
         user['id'] = user['_id']
         return User.parse_obj(user)
 
-    async def create(self, user_auth: UserAuthentication, is_admin: bool) -> User:
+    async def create(self, user_auth: UserAuthentication, role: UserRole) -> User:
         try:
             result = await self.__collection.insert_one({
                 'username': user_auth.username,
                 'password': self.__password_context.hash(user_auth.password),
-                'is_admin': is_admin
+                'role': role.value
             })
         except DuplicateKeyError:
             raise InvalidCredentialsError("Username is already taken.")
-        return User(id=result.inserted_id, username=user_auth.username, is_admin=is_admin)
+        return User(id=result.inserted_id, username=user_auth.username, role=role)
 
-    async def create_default(self, user_auth: UserAuthentication, is_admin: bool) -> None:
+    async def create_default_superuser(self, user_auth: UserAuthentication) -> None:
         try:
-            await self.create(user_auth, is_admin)
+            await self.create(user_auth, UserRole.SUPERUSER)
         except InvalidCredentialsError:
             pass
 
