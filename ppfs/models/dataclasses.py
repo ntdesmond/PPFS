@@ -1,12 +1,13 @@
+from enum import Enum
+
 from bson import ObjectId
 from pydantic import BaseModel
-from enum import Enum
 
 
 class UserRole(Enum):
-    READONLY = 'read'
-    EDITOR = 'edit'
-    SUPERUSER = 'admin'
+    READONLY = "read"
+    EDITOR = "edit"
+    SUPERUSER = "admin"
 
 
 class TokenData(BaseModel):
@@ -20,6 +21,4 @@ class User(BaseModel):
 
     class Config:
         arbitrary_types_allowed = True
-        json_encoders = {
-            ObjectId: str
-        }
+        json_encoders = {ObjectId: str}

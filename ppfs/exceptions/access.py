@@ -13,5 +13,5 @@ class NotPrivilegedUser(AccessError):
 async def access_error_handler(_, exception: AccessError):
     return ORJSONResponse(
         status_code=status.HTTP_403_FORBIDDEN,
-        content={'error': exception.__class__.__name__, 'detail': str(exception)}
+        content={"error": exception.__class__.__name__, "detail": str(exception)},
     )

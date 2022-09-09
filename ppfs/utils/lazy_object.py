@@ -1,6 +1,6 @@
-from typing import TypeVar, Type
+from typing import Type, TypeVar
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class LazyObject:

@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     default_superuser_password: str
 
     class Config:
-        env_file = ".env"     # Use .env file for local development
+        env_file = ".env"  # Use .env file for local development
         env_prefix = "PPFS_"
 
 

@@ -1,22 +1,24 @@
+from bson import ObjectId
 from bson.errors import InvalidId
+from fastapi import Depends, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from fastapi import Security, Depends
 from gridfs import NoFile
 from jose import JWTError
-from bson import ObjectId
 
-from .exceptions.auth import InvalidCredentialsError, UserNotFoundError
 from .exceptions.access import NotPrivilegedUser
+from .exceptions.auth import InvalidCredentialsError, UserNotFoundError
+from .factory import Users, get_user_factory
 from .models.dataclasses import TokenData, User, UserRole
 from .utils.token import decode_access_token
-from .factory import get_user_factory, Users
 
 security = HTTPBearer()
 
 invalid_token_exception = InvalidCredentialsError("Invalid or expired token.")
 
 
-async def get_access_token(credentials: HTTPAuthorizationCredentials = Security(security)) -> TokenData:
+async def get_access_token(
+    credentials: HTTPAuthorizationCredentials = Security(security),
+) -> TokenData:
     try:
         return decode_access_token(credentials.credentials)
     except JWTError:
@@ -25,7 +27,7 @@ async def get_access_token(credentials: HTTPAuthorizationCredentials = Security(
 
 async def get_current_user(
     token_data: TokenData = Depends(get_access_token),
-    users: Users = Depends(get_user_factory)
+    users: Users = Depends(get_user_factory),
 ) -> User:
     try:
         return await users.get(ObjectId(token_data.user_id))

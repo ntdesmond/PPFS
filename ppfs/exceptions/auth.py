@@ -17,6 +17,6 @@ class UserNotFoundError(AuthError):
 async def auth_error_handler(_, exception: AuthError):
     return ORJSONResponse(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        content={'error': exception.__class__.__name__, 'detail': str(exception)},
+        content={"error": exception.__class__.__name__, "detail": str(exception)},
         headers={"WWW-Authenticate": "Bearer"},
     )
