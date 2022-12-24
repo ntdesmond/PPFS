@@ -4,4 +4,3 @@ from ..utils.lazy_object import LazyObject
 
 get_user_factory = LazyObject(Users)
 get_file_factory = LazyObject(Files)
-

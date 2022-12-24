@@ -1,0 +1,17 @@
+# Example of a configuration file. Values below have to be replaced.
+
+# Can be generated with `openssl rand -hex 32`
+jwt_key: 00ec141d73b6cda62d2085b5d04599c7ea3e129931f686a71d07320455cf5c94
+
+mongodb:
+  host: mongodb
+  username: ppfs_admin
+  password: ppfs_admin_password
+
+users:
+  - username: admin
+    password: admin_pass
+    is_admin: true
+  - username: user
+    password: user_pass
+    is_admin: false

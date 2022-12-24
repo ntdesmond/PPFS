@@ -1,36 +1,36 @@
-from pydantic import BaseSettings, constr
+import logging
+import yaml
+from pydantic import BaseSettings, BaseModel, constr
 
-from ppfs.models.schemas import UserAuthentication
+
+def read_yaml(filename: str):
+    with open(filename, "rb") as file:
+        return yaml.safe_load(file)
+
+
+config: dict = read_yaml("./config/ppfs.yaml")
+logging.getLogger("gunicorn.error").info(f"{config=}")
+
+
+class MongoDBConfig(BaseModel):
+    host: str
+    username: str
+    password: str
+
+
+class UserConfig(BaseModel):
+    username: str
+    password: str
+    is_admin: bool
 
 
 class Settings(BaseSettings):
-    jwt_key: constr(min_length=32)
-    mongodb_host: str
-    mongodb_username: str
-    mongodb_password: str
-    allow_register: bool
-    default_admin_username: str
-    default_admin_password: str
-    default_user_username: str
-    default_user_password: str
-
-    @property
-    def admin_credentials(self) -> UserAuthentication:
-        return UserAuthentication(
-            username=self.default_admin_username,
-            password=self.default_admin_password
-        )
-
-    @property
-    def user_credentials(self) -> UserAuthentication:
-        return UserAuthentication(
-            username=self.default_user_username,
-            password=self.default_user_password
-        )
-
-    class Config:
-        env_file = ".env"     # Use .env file for local development
-        env_prefix = "PPFS_"
+    jwt_key: constr(min_length=32) = config.get("jwt_key")
+    mongodb: MongoDBConfig = MongoDBConfig.parse_obj(config.get("mongodb"))
+    users: list[UserConfig] = [
+        UserConfig.parse_obj(user) for user in config.get("users")
+    ]
 
 
 settings = Settings()
+logging.getLogger("gunicorn.error").info(f"{settings.mongodb.host=}")

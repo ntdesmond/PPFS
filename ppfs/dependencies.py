@@ -16,7 +16,9 @@ security = HTTPBearer()
 invalid_token_exception = InvalidCredentialsError("Invalid or expired token.")
 
 
-async def get_access_token(credentials: HTTPAuthorizationCredentials = Security(security)) -> TokenData:
+async def get_access_token(
+    credentials: HTTPAuthorizationCredentials = Security(security),
+) -> TokenData:
     try:
         return decode_access_token(credentials.credentials)
     except JWTError:
@@ -25,7 +27,7 @@ async def get_access_token(credentials: HTTPAuthorizationCredentials = Security(
 
 async def get_current_user(
     token_data: TokenData = Depends(get_access_token),
-    users: Users = Depends(get_user_factory)
+    users: Users = Depends(get_user_factory),
 ) -> User:
     try:
         return await users.get(ObjectId(token_data.user_id))
