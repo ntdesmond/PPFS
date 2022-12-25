@@ -21,11 +21,10 @@ class Users:
         self.__password_context = CryptContext(schemes=["bcrypt"])
 
         asyncio.run_coroutine_threadsafe(
-            self.__init_collection(), loop=asyncio.get_running_loop()
+            self.__create_index(), loop=asyncio.get_running_loop()
         )
 
-    async def __init_collection(self):
-        await self.__collection.drop()
+    async def __create_index(self):
         await self.__collection.create_index("username", unique=True)
 
     async def authenticate(self, user_auth: UserAuthentication) -> User:
@@ -59,6 +58,9 @@ class Users:
             await self.create(UserAuthentication.parse_obj(user), user.is_admin)
         except InvalidCredentialsError:
             pass
+
+    async def clear(self) -> None:
+        await self.__collection.drop()
 
     async def get(self, id: ObjectId) -> User:
         user = await self.__collection.find_one({"_id": id})

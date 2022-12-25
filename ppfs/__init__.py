@@ -25,5 +25,6 @@ register_error_handlers(app)
 @app.on_event("startup")
 async def add_default_users():
     users: Users = await get_user_factory()
+    await users.clear()
     for user in settings.users:
         await users.create_default(user)
