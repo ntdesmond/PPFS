@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from .factory import get_user_factory, Users
 from .settings import settings
@@ -8,6 +9,13 @@ from .exceptions import register_error_handlers
 
 app = FastAPI(
     title="kiosk-file-system", version="1.0", default_response_class=ORJSONResponse
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 include_routers(app)
