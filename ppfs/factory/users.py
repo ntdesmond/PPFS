@@ -21,10 +21,11 @@ class Users:
         self.__password_context = CryptContext(schemes=["bcrypt"])
 
         asyncio.run_coroutine_threadsafe(
-            self.__create_index(), loop=asyncio.get_running_loop()
+            self.__init_collection(), loop=asyncio.get_running_loop()
         )
 
-    async def __create_index(self):
+    async def __init_collection(self):
+        await self.__collection.drop()
         await self.__collection.create_index("username", unique=True)
 
     async def authenticate(self, user_auth: UserAuthentication) -> User:

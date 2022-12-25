@@ -1,24 +1,22 @@
 version: '3.9'
 
+volumes:
+  files_db:
+
+
 services:
   api:
     image: ntdesmond/ppfs:latest
     build:
       dockerfile: ./docker/Dockerfile
       context: ./
-    environment:
-      - PPFS_JWT_KEY
-      - PPFS_MONGODB_USERNAME
-      - PPFS_MONGODB_PASSWORD
-      - PPFS_ALLOW_REGISTER
-      - PPFS_DEFAULT_ADMIN_USERNAME
-      - PPFS_DEFAULT_ADMIN_PASSWORD
-      - PPFS_DEFAULT_USER_USERNAME
-      - PPFS_DEFAULT_USER_PASSWORD
-      - PPFS_MONGODB_HOST=mongodb
+    volumes:
+      - ./ppfs.yaml:/etc/ppfs.yaml:ro
     ports:
       - "8000:8000"
     restart: unless-stopped
+    depends_on:
+      - mongodb
     logging:
       driver: json-file
       options:
@@ -30,5 +28,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${PPFS_MONGODB_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${PPFS_MONGODB_PASSWORD}
     restart: unless-stopped
+    volumes:
+      - files_db:/data/db:rw
     logging:
       driver: none

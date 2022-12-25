@@ -8,7 +8,7 @@ from .routers import include_routers
 from .exceptions import register_error_handlers
 
 app = FastAPI(
-    title="kiosk-file-system", version="1.0", default_response_class=ORJSONResponse
+    title="kiosk-file-server", version="1.0", default_response_class=ORJSONResponse
 )
 app.add_middleware(
     CORSMiddleware,

@@ -13,5 +13,5 @@ users:
     password: admin_pass
     is_admin: true
   - username: user
-    password: user_pass
+    password: user_pass123
     is_admin: false

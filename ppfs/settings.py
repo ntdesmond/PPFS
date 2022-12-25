@@ -1,15 +1,9 @@
-import logging
 import yaml
 from pydantic import BaseSettings, BaseModel, constr
 
 
-def read_yaml(filename: str):
-    with open(filename, "rb") as file:
-        return yaml.safe_load(file)
-
-
-config: dict = read_yaml("./config/ppfs.yaml")
-logging.getLogger("gunicorn.error").info(f"{config=}")
+with open("/etc/ppfs.yaml", "rb") as file:
+    config: dict = yaml.safe_load(file)
 
 
 class MongoDBConfig(BaseModel):
@@ -33,4 +27,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-logging.getLogger("gunicorn.error").info(f"{settings.mongodb.host=}")
