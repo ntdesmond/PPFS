@@ -11,10 +11,26 @@ class AuthenticationResponse(BaseModel):
     access_token: str
 
 
+class FileDescription(BaseModel):
+    ru: str
+    en: str
+
+    @classmethod
+    def from_filename(cls, filename: str):
+        description = filename.rsplit(".", maxsplit=1)[0]
+        return cls(ru=description, en=description)
+
+
+class OptionalFileDescription(FileDescription):
+    ru: str | None
+    en: str | None
+
+
 class FileInfo(BaseModel):
     id: str
     filename: str
     content_type: str
+    description: FileDescription
 
     def __init__(self, id: ObjectId | str, **kwargs):
         super().__init__(id=str(id), **kwargs)

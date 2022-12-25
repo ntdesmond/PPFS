@@ -1,10 +1,10 @@
 from bson import ObjectId
-from fastapi import APIRouter, Depends, UploadFile, status
+from fastapi import APIRouter, Depends, UploadFile, status, Body
 from fastapi.responses import StreamingResponse, Response
 
 from ..dependencies import get_current_user, get_privileged_user, get_id
 from ..factory import get_file_factory, Files
-from ..models.schemas import FileInfo
+from ..models.schemas import FileDescription, FileInfo, OptionalFileDescription
 from ..utils.files import get_file_chunks
 
 read_router = APIRouter(tags=["Read files"], dependencies=[Depends(get_current_user)])
@@ -33,16 +33,25 @@ async def get_file_content(
 # Privileged users: add, edit and delete files
 @write_router.post("/new", status_code=status.HTTP_201_CREATED, response_model=FileInfo)
 async def create_new_file(file: UploadFile, files: Files = Depends(get_file_factory)):
-    return await files.upload_file(file.filename, file.file, file.content_type)
+    return await files.upload_file(
+        file.filename,
+        file.file,
+        file.content_type,
+        description=FileDescription.from_filename(file.filename),
+    )
 
 
 @write_router.patch("/{id}", status_code=status.HTTP_200_OK, response_model=FileInfo)
-async def rename_file(
-    new_name: str,
+async def edit_file_info(
+    name: str | None = Body(default=None),
+    description: OptionalFileDescription | None = None,
     id: ObjectId = Depends(get_id),
     files: Files = Depends(get_file_factory),
 ):
-    await files.rename(id, new_name)
+    if name is not None:
+        await files.rename(id, name)
+    if description is not None:
+        await files.update_description(id, description)
     return await files.get(id)
 
 
