@@ -11,6 +11,7 @@ concurrency: build-and-push
 
 permissions:
   contents: read
+  packages: write
 
 env:
   IMAGE_NAME: ghcr.io/${{ github.repository }}
