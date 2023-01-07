@@ -6,7 +6,7 @@ volumes:
 
 services:
   api:
-    image: ntdesmond/ppfs:latest
+    image: ghcr.io/uni-feedback-kiosk/file-server:latest
     build:
       dockerfile: ./docker/Dockerfile
       context: ./
